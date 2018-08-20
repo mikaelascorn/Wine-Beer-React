@@ -9,18 +9,18 @@ class Form extends Component {
 
   getUserInfo = e => {
     e.preventDefault();
-    // get the users value
+    // get the users choice
     const userPostal = this.postalRef.current.value;
-    // const userBudget = this.budgetRef;
-    console.log(this.budgetRef);   
-    console.log(e.target);
+    const userBudget = this.budgetRef.current.value;
+
+    // console.log(this.budgetRef.current.value);   
     
     const finalPostal = userPostal.split(' ').join('+');
     this.getStore(finalPostal);
 
-    // this.getBudget(userBudget);
+    this.getBudget(userBudget);
     // reset the fields after submit hit
-    e.currentTarget.reset();
+    // e.currentTarget.reset();
   }
 
   getStore = (geo) => {
@@ -69,48 +69,56 @@ class Form extends Component {
         <label htmlFor="postal">Enter your postal code</label>
         <input id="postal" type="text" pattern="[L-Pl-p][0-9][A-Za-z] [0-9][A-Za-z][0-9]" placeholder="M5A 3W7" ref={this.postalRef} />
 
-        <div>
-          <h2>Budget!</h2>
-          <input 
-            type="radio" 
-            name="price" 
-            id="budget" 
-            value="budget" 
-            ref={this.budgetRef}
-          />
-          <label htmlFor="budget">$</label>
-
-          <input 
-            type="radio" 
-            name="price" 
-            id="cheap" 
-            value="cheap" 
-            ref={this.budgetRef}
-          />
-          <label htmlFor="cheap">$$</label>
-
-          <input 
-            type="radio" 
-            name="price" 
-            id="pricy" 
-            value="pricy" 
-            ref={this.budgetRef}
-          />
-          <label htmlFor="pricy">$$$</label>
-
-          <input 
-            type="radio" 
-            name="price" 
-            id="expensive" 
-            value="expensive" 
-            ref={this.budgetRef}
-          />
-          <label htmlFor="expensive">$$$$</label>
-        </div>
+        <h2>Budget!</h2>
+        <select ref={this.budgetRef}>
+          <option value="budget">$</option>
+          <option value="cheap">$$</option>
+          <option value="pricy">$$$</option>
+          <option value="expensive">$$$$</option>
+        </select>
 
         <button type="submit">Find Me A Drink!</button>
+        {/* <div ref={this.budgetRef}>
+          <input
+          name="price"
+            type="radio"
+            id="budget"
+            value="budget"
+          // ref={this.budgetRef}
+          />
+          <label htmlFor="budget">$</label>
+        
+          <input
+            type="radio"
+            name="price"
+            id="cheap"
+            value="cheap"
+          // ref={this.budgetRef}
+          />
+          <label htmlFor="cheap">$$</label>
+        
+          <input
+            type="radio"
+            name="price"
+            id="pricy"
+            value="pricy"
+          // ref={this.budgetRef}
+          />
+          <label htmlFor="pricy">$$$</label>
+        
+          <input
+            type="radio"
+            name="price"
+            id="expensive"
+            value="expensive"
+          // ref={this.budgetRef}
+          />
+          <label htmlFor="expensive">$$$$</label>
+        </div> */}
       </form>;
   }
 }
 
 export default Form;
+
+
