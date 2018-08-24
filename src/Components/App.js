@@ -19,7 +19,7 @@ class App extends Component {
   }
 
   closeStore = (store) => {
-    console.log(store);
+    // console.log(store);
     this.setState({
       userStore: store,
     })
@@ -34,6 +34,7 @@ class App extends Component {
         <Form 
           closeStore={this.closeStore}
         />
+        
       </div>
     );
   }

@@ -3,33 +3,36 @@ import axios from "axios";
 import Qs from "qs";
 
 class Form extends Component {
-
   postalRef = React.createRef();
   budgetRef = React.createRef();
+  drinkRef = React.createRef();
 
   getUserInfo = e => {
     e.preventDefault();
     // get the users choice
     const userPostal = this.postalRef.current.value;
     const userBudget = this.budgetRef.current.value;
+    const userDrink = this.drinkRef.current.value;
 
-    // console.log(this.budgetRef.current.value);   
-    
-    const finalPostal = userPostal.split(' ').join('+');
+    const finalPostal = userPostal.split(" ").join("+");
     this.getStore(finalPostal);
 
-    this.getBudget(userBudget);
+    this.getDrinks(userDrink);
+
+    this.filterDrinks(userBudget);
+
+    this.filterDrinks(userDrink);
     // reset the fields after submit hit
     // e.currentTarget.reset();
-  }
+  };
 
-  getStore = (geo) => {
-    console.log(geo);
+  getStore = geo => {
+    // console.log(geo);
     axios({
       method: "GET",
       url: "http://proxy.hackeryou.com",
       dataResponse: "json",
-      paramsSerializer: function (params) {
+      paramsSerializer: function(params) {
         return Qs.stringify(params, { arrayFormat: "brackets" });
       },
       params: {
@@ -44,30 +47,71 @@ class Form extends Component {
         xmlToJSON: false
       }
     }).then(res => {
-      console.log(res.data.result[0]);
+      // console.log(res.data.result[0]);
       const store = {
         location: res.data.result[0].address_line_1,
-        city: res.data.result[0].city,
-      }
+        city: res.data.result[0].city
+      };
 
-      // const storeId = res.data.result[0].id;
-      // pass store ID to the search store 
-
+      const storeId = res.data.result[0].id;
+      // pass store ID to the search store
+      this.getDrinks(storeId)
       // pass the store object to the main app, hold in state to render to page
       this.props.closeStore(store);
     });
-  }
+  };
 
-  getBudget = (budget) => {
-    console.log(budget);
-    
+  getDrinks = (drink, store) => {
+    // console.log(drink, store);
+    const userDrink = drink;
+    const userStore = store;
+    axios({
+      method: "GET",
+      url: "http://proxy.hackeryou.com",
+      dataResponse: "json",
+      paramsSerializer: function(params) {
+        return Qs.stringify(params, { arrayFormat: "brackets" });
+      },
+      params: {
+        reqUrl: `http://lcboapi.com/products?q=${userDrink}&per_page=100&=${userStore}`,
+        params: {
+          Authorization:
+            "MDo0NzhjODRiZS1hM2UyLTExZTgtODY5Yi1mMzUwY2I4MDMzZDY6VHhFYWFNS1Z0TEtYMEFxT1hCTWpsN2hnWHVHc2xDQ1lrYVBX"
+        },
+        proxyHeaders: {
+          header_params: "value"
+        },
+        xmlToJSON: false
+      }
+    }).then(res => {
+      // console.log(res.data.result);
+      const data = res.data.result;
+      this.filterDrinks(data);
+    });
+  };
+
+  // filter the drinks by price 
+  filterDrinks = (data, budget, drink) => {
+    console.log(data, budget, drink);
+
+    // buried if else statements checking wine colour and then budget
+    // if (drink === red || white ) {
+      // if (budget)
+    // }
   }
 
   render() {
-    return <form onSubmit={this.getUserInfo}>
+    return (
+      <form onSubmit={this.getUserInfo}>
         <h2>Where are you?</h2>
         <label htmlFor="postal">Enter your postal code</label>
-        <input id="postal" type="text" pattern="[L-Pl-p][0-9][A-Za-z] [0-9][A-Za-z][0-9]" placeholder="M5A 3W7" ref={this.postalRef} />
+        <input
+          id="postal"
+          type="text"
+          pattern="[L-Pl-p][0-9][A-Za-z] [0-9][A-Za-z][0-9]"
+          placeholder="M5A 3W7"
+          ref={this.postalRef}
+        />
 
         <h2>Budget!</h2>
         <select ref={this.budgetRef}>
@@ -77,45 +121,17 @@ class Form extends Component {
           <option value="expensive">$$$$</option>
         </select>
 
+        <h2>Poison!</h2>
+        <select ref={this.drinkRef}>
+          <option value="white">White Wine</option>
+          <option value="red">Red Wine</option>
+          <option value="beer">Beer</option>
+          <option value="cider">Cider</option>
+        </select>
+
         <button type="submit">Find Me A Drink!</button>
-        {/* <div ref={this.budgetRef}>
-          <input
-          name="price"
-            type="radio"
-            id="budget"
-            value="budget"
-          // ref={this.budgetRef}
-          />
-          <label htmlFor="budget">$</label>
-        
-          <input
-            type="radio"
-            name="price"
-            id="cheap"
-            value="cheap"
-          // ref={this.budgetRef}
-          />
-          <label htmlFor="cheap">$$</label>
-        
-          <input
-            type="radio"
-            name="price"
-            id="pricy"
-            value="pricy"
-          // ref={this.budgetRef}
-          />
-          <label htmlFor="pricy">$$$</label>
-        
-          <input
-            type="radio"
-            name="price"
-            id="expensive"
-            value="expensive"
-          // ref={this.budgetRef}
-          />
-          <label htmlFor="expensive">$$$$</label>
-        </div> */}
-      </form>;
+      </form>
+    );
   }
 }
 
